@@ -12,10 +12,10 @@ freqs = np.load('re-sampled_frequencies.npy')
 # iterate through desired upchannelization factors to generate matrices
 for u in U:
 
+    observing_freqs = np.load('chans_' + str(U) + '.npy')
     # calling function the get arrays
-    R, chans, norm = get_response_matrix(freqs, u)
+    R, norm = get_response_matrix(freqs, observing_freqs, u)
 
     # saving as .npy files to be opened for later upchannelization
     np.save('R_' + str(u) + '.npy', R)
-    np.save('chans_' + str(u) + '.npy', chans)
     np.save('norm_' + str(u) + '.npy', norm)
