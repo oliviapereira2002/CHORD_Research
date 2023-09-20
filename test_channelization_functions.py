@@ -46,13 +46,4 @@ def test_get_chans():
     assert len(channelization_functions.get_chans(1398, 1398)) == 2
     assert len(channelization_functions.get_chans(1399, 1398)) == 0
 
-# testing relevant functions used in pipeline process
-# creating pseudo V and S so we don't have to load any files
 
-V = np.array([[0, 1, 2, 3, 4, 5], [-4, -3, -2, -1, 0, 1, 2, 3, 4]], dtype = object)
-S = np.array([[1, 2, 2, 3, 4, 1], [5, 6, 7, 7, 12, 13, 20, 20, 21]], dtype = object)
-nfreq  = 5
-midfreq = 15
-min_obs_freq = 10
-max_obs_freq = 20
-freqs = np.array([9, 12, 15, 18, 21])
