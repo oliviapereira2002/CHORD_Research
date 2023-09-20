@@ -6,7 +6,7 @@ from unit_converter import GalaxyCatalog # to convert profiles
 import Generate_HI_Spectra as g
 import h5py
 from FreqState import FreqState
-from save_galaxy_map import write_map
+from save_galaxy_map import write_map, map_catalog
 from scipy import interpolate
 
 '''Functions for general (up)channelization'''
@@ -165,7 +165,7 @@ def read_catalogue(file):
         W.append(w)
         Wroots.append(w_)
 
-    return V, S, z
+    return V, S, z, ra, dec
 
 def get_fine_freqs(observing_freqs, fmin, fmax):
     dc = np.abs(observing_freqs[0] - observing_freqs[1]) # getting a negative dc 
@@ -288,19 +288,24 @@ def upchannelize(profiles, U, R_filepath, norm_filepath):
 
     return heights
 
-def channelize_catalogue(U, fine_freqs, catalogue_filepath, R_filepath, norm_filepath):
+def channelize_catalogue(U, catalogue_filepath, R_filepath, norm_filepath, nfreq, nside, save_title, fine_freqs):
     # getting velocity and flux from catalogue
-    V, S, z = read_catalogue(catalogue_filepath)
+    V, S, z, ra, dec = read_catalogue(catalogue_filepath)
+
+    fstate = FreqState()
+    fstate.freq = (fmax, fmin, nfreq)
 
     # resampling and converting into profiles in frequency space
-    freqs, profiles = get_resampled_profiles(V, S, z, fine_freqs) # rewrite to get only profiles
+    profiles = get_resampled_profiles(V, S, z, fine_freqs) # rewrite to get only profiles
 
     # generating heights
-    heights = upchannelize(freqs, profiles, U, R_filepath, norm_filepath)
+    heights = upchannelize(profiles, U, R_filepath, norm_filepath)
 
-    return heights
+    pol = "full"
 
-def channelize_map(U, map_filepath, R_filepath, norm_filepath, chans_filepath, save_title):
+    map_catalogue(fstate, heights, nside, pol, ra, dec, filename = save_title, write = True)
+
+def channelize_map(U, fmax, fmin, nfreq, map_filepath, R_filepath, norm_filepath, save_title):
     ''' Opening map '''
     f = h5py.File(map_filepath)
     Map = np.array(f['map'])  # the healpix map
@@ -316,12 +321,10 @@ def channelize_map(U, map_filepath, R_filepath, norm_filepath, chans_filepath, s
         func = interpolate.interp1d(freqs, Map[:, 0, i])
         pixels.append(func(freq))
     
-    chans = np.load(chans_filepath)
     heights = upchannelize(freqs, pixels, U, R_filepath, norm_filepath)
     fstate = FreqState()
-    fstate.freq = (chans.min(), chans.max(), len(chans))  # (start, end (not inclusive), number of channels)
+    fstate.freq = (fmax, fmin, nfreq)  # (start, end (not inclusive), number of channels)
 
-    nfreq = len(fstate.frequencies)
     npol = 4
 
     map_ = np.zeros((nfreq, npol, len(pixels)), dtype=np.float64)
