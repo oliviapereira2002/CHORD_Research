@@ -238,9 +238,9 @@ def get_response_matrix(fine_freqs, observing_freqs, U, M = 4, N = 4096, viewmat
         plt.savefig('matrix_' + str(U) + '.png')
 
     # removing frequency ripples from coarse channelization
-    df = fine_freqs[1] - fine_freqs[0]
-    dc = np.abs(observing_freqs[1] - observing_freqs[0])
-    freqs_null = np.arange(observing_freqs.min() - 2 * dc, observing_freqs.max() + 2 * dc, np.abs(df))
+    df = fine_freqs[1] - fine_freqs[0] # negative
+    dc = np.abs(observing_freqs[1] - observing_freqs[0]) # positive
+    freqs_null = np.arange(observing_freqs.min() - 2 * dc, observing_freqs.max() + 2 * dc, np.abs(df))[::-1]
     f_null = np.reshape(freq_unit_strip(freqs_null), (freqs_null.size, 1))
     null = freqs_null * 0 + 1
 
