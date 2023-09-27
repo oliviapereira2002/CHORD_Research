@@ -167,9 +167,12 @@ def read_catalogue(file):
 
     return V, S, z, ra, dec
 
-def get_fine_freqs(observing_freqs, fmin, fmax):
-    dc = np.abs(observing_freqs[0] - observing_freqs[1]) # getting a negative dc 
+def get_fine_freqs(observing_freqs):
+    fmax = np.max(observing_freqs)
+    fmin = np.min(observing_freqs)
+    dc = observing_freqs[1] - observing_freqs[0]  # getting a negative dc 
     return np.arange(fmax, fmin, dc / 3) # making the frequency resolution = 1/3 dc 
+
 
 def get_resampled_profiles(V, S, z, fine_freqs):
     '''Takes opened galaxy catalogue and returns finely re-sampled profiles in frequency space.
