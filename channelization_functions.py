@@ -121,14 +121,14 @@ def freq_unit_add(f_bar):
     return f_bar / (4096 * 0.417 * 0.001) + 300
 
 
-def get_chans(min_freq, max_freq):
+def get_chans(max_freq, min_freq):
     '''(int/float, int/float) -> (array)
     Takes a minimum and maximum observing frequency and returns the appropriate corresponding 
     coarse channels for CHORD'''
     min_chan = np.floor(freq_unit_strip(min_freq))
     max_chan = np.ceil(freq_unit_strip(max_freq))
     
-    return np.arange(min_chan, max_chan + 1)
+    return np.arange(max_chan, min_chan, -1)
 
 # Relevant functions start below this line!
 # --------------------------------------------------------
