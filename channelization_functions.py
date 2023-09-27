@@ -318,7 +318,7 @@ def channelize_map(U, fmax, fmin, nfreq, map_filepath, R_filepath, norm_filepath
     freq = np.linspace(freqs.min(), freqs.max(), 1000) # new frequencies
     pixels = []
     for i in range(49152):
-        func = interpolate.interp1d(freqs, Map[:, 0, i])
+        func = interpolate.interp1d(freqs, Map[:, 0, i], fill_value='extrapolate')
         pixels.append(func(freq))
     
     heights = upchannelize(freqs, pixels, U, R_filepath, norm_filepath)
