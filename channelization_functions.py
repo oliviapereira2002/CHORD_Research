@@ -215,7 +215,7 @@ def get_response_matrix(fine_freqs, observing_freqs, U, M = 4, N = 4096, viewmat
         norm (np.ndarray): channelization envelope to be divided out for normalization '''
     
     # setting the coarse channels
-    coarse_chans = get_chans(observing_freqs.min(), observing_freqs.max())
+    coarse_chans = get_chans(observing_freqs.max(), observing_freqs.mmin())
 
     # stripping units and reshaping frequencies and channels
     f = np.reshape(freq_unit_strip(fine_freqs[::-1]), (fine_freqs.size, 1))
