@@ -8,8 +8,8 @@ U = 16  # choose an upchannelization factor
 catalogue_filepath = '/Users/oliviapereira/Desktop/channelization_project/source_files/HI_Catalog.txt'
 R_filepath = '/Users/oliviapereira/Desktop/channelization_project/matrices/1400/R_' + str(U) + '.npy'
 norm_filepath = '/Users/oliviapereira/Desktop/channelization_project/matrices/1400/norm_' + str(U) + '.npy'
-
-channelized_catalogue = channelize_catalogue(U, catalogue_filepath, R_filepath, norm_filepath)
+fine_freqs = np.load('re-sampled_frequencies.npy')
+channelized_catalogue = channelize_catalogue(U, fine_freqs, catalogue_filepath, R_filepath, norm_filepath)
 
 '''channelizing a map'''
 U = 16  # choose an upchannelization factor
