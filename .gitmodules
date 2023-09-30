@@ -1,3 +1,6 @@
 [submodule "freq_matched_filter"]
 	path = freq_matched_filter
 	url = git@github.com:hanshopkins/freq_matched_filter.git
+[submodule "CHORDgals"]
+	path = CHORDgals
+	url = https://github.com/rebeccaceppas/CHORDgals.git
