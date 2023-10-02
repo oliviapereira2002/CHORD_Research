@@ -237,7 +237,10 @@ def get_response_matrix(fine_freqs, observing_freqs, U, M = 4, N = 4096, viewmat
     
     # setting the coarse channels
     # coarse_chans = get_chans(observing_freqs.min(), observing_freqs.max())
-    coarse_chans = get_freqs(np.ceil(observing_freqs.max()), np.floor(observing_freqs.min()), U = 1).frequencies
+    if U == 1:
+        coarse_chans = observing_freqs
+    else:
+        coarse_chans = get_freqs(np.ceil(observing_freqs.max()), np.floor(observing_freqs.min()), U = 1).frequencies
 
     # stripping units and reshaping frequencies and channels
     f = np.reshape(freq_unit_strip(fine_freqs), (fine_freqs.size, 1))
