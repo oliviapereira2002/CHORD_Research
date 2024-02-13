@@ -34,9 +34,10 @@ def draw_random_errors(phase_bins, phase_heights, amp_bins, amp_heights, output_
 
 
 # wrapper function for once we have the file 
-def get_calibration_errors(output_shape, filename = 'generic file name - change once imported to pipeline'):
+def get_calibration_errors(output_shape, phase_file, amp_file):
     
-    phase_bins, phase_heights, amp_bins, amp_heights = filename # change to however the file should be opened
+    phase_bins, phase_heights = np.load(phase_file).T
+    amp_bins, amp_heights = np.load(amp_file).T 
     phase_draws, amp_draws = draw_random_errors(phase_bins, phase_heights, amp_bins, amp_heights, output_shape)
     
     return phase_draws, amp_draws
@@ -44,25 +45,34 @@ def get_calibration_errors(output_shape, filename = 'generic file name - change 
 # ***************************************
 
 if (__name__ == "__main__"):
+    ''' Example for doing a 1-D draw from our histograms '''
     import matplotlib.pyplot as plt
 
-    phase_bins = np.linspace(12, 22, 20)
-    phase_heights = np.abs(np.sin(phase_bins))
+    ndraws = 100000
+    nbins = 100 # for plotting results, has no effect on function
 
-    amp_bins = np.linspace(0, 10, 20)
-    amp_heights = amp_bins 
-
-    phase_draws, amp_draws = draw_random_errors(phase_bins, phase_heights, amp_bins, amp_heights, (2, 3, 2))
+    phase_draws, amp_draws = get_calibration_errors((1, 1, ndraws), "visibility_phase_errors.npy", "visibility_amplitude_errors.npy")
     
-    print(phase_draws)
-    print(amp_draws)
+    # re-loading in just to plot original distributio
+    phase_bins, phase_heights = np.load("visibility_phase_errors.npy").T
+    amp_bins, amp_heights = np.load("visibility_amplitude_errors.npy").T 
 
-    # counts, bins = np.histogram(phase_draws, bins = 20)
-    # plt.stairs(counts / np.max(counts), edges = bins)
-    # plt.plot(phase_bins, phase_heights / np.max(phase_heights))
+    # plotting the random draws
+    plt.subplot(1,2,1)
+    counts, bins = np.histogram(phase_draws, bins = nbins)
+    plt.plot(phase_bins, phase_heights / np.max(phase_heights), label = 'original histogram', color = 'black', linewidth = 0.8)
+    plt.stairs(counts / np.max(counts), edges = bins, label = 'phase draws,\nn = ' + str(ndraws), color = 'blue', alpha = 0.8)
+    plt.title('Scaled Results of Random Draws from Phase Error Hist.')
+    plt.xlabel('Phase error [rad]')
+    plt.legend()
 
-    # counts, bins = np.histogram(amp_draws, bins = 20)
-    # plt.stairs(counts / np.max(counts), edges = bins)
-    # plt.plot(amp_bins, amp_heights / np.max(amp_heights))
-
-    # plt.show()
+    plt.subplot(1,2,2)
+    counts, bins = np.histogram(amp_draws, bins = nbins)
+    plt.plot(amp_bins, amp_heights / np.max(amp_heights), label = 'original histogram', color = 'black', linewidth = 0.8)
+    plt.stairs(counts / np.max(counts), edges = bins, label = 'amplitude draws,\nn = ' + str(ndraws), color = 'red', alpha = 0.8)
+    plt.title('Scaled Results of Random Draws from Amplitude Error Hist.')
+    plt.xlabel('Amplitude error [%]')
+    plt.legend()
+    
+    plt.tight_layout()
+    plt.show()
